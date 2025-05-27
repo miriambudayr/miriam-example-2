@@ -77,7 +77,7 @@ This can happen if you are either:
 
 Double-check that you are depending on compatible Jackson versions.
 
-See https://www.github.com/stainless-sdks/miriam-example-2-java#jackson for more information.
+See https://www.github.com/miriambudayr/miriam-example-2#jackson for more information.
         """
             .trimIndent()
     }
