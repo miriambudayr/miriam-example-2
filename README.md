@@ -3,11 +3,11 @@
 [![Maven Central](https://img.shields.io/maven-central/v/com.configure_me_miriam_example_2.api/miriam-example-2-java)](https://central.sonatype.com/artifact/com.configure_me_miriam_example_2.api/miriam-example-2-java/0.0.1-alpha.0)
 [![javadoc](https://javadoc.io/badge2/com.configure_me_miriam_example_2.api/miriam-example-2-java/0.0.1-alpha.0/javadoc.svg)](https://javadoc.io/doc/com.configure_me_miriam_example_2.api/miriam-example-2-java/0.0.1-alpha.0)
 
-The Miriam Example 2 Java SDK provides convenient access to the [Miriam Example 2 REST API](https://swagger.ioooooooo) from applications written in Java.
+The Miriam Example 2 Java SDK provides convenient access to the [Miriam Example 2 REST API](https://swagger.ioooo) from applications written in Java.
 
 It is generated with [Stainless](https://www.stainless.com/).
 
-The REST API documentation can be found on [swagger.ioooooooo](https://swagger.ioooooooo). Javadocs are available on [javadoc.io](https://javadoc.io/doc/com.configure_me_miriam_example_2.api/miriam-example-2-java/0.0.1-alpha.0).
+The REST API documentation can be found on [swagger.ioooo](https://swagger.ioooo). Javadocs are available on [javadoc.io](https://javadoc.io/doc/com.configure_me_miriam_example_2.api/miriam-example-2-java/0.0.1-alpha.0).
 
 ## Installation
 
