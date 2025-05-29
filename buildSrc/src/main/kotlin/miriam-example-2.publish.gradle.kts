@@ -11,7 +11,7 @@ configure<PublishingExtension> {
             pom {
                 name.set("Swagger Petstore")
                 description.set("A sample API that uses a petstore as an example to demonstrate features in the\nOpenAPI 3.0 specification")
-                url.set("https://swagger.iooooo")
+                url.set("https://swagger.ioo")
 
                 licenses {
                     license {
