@@ -10,7 +10,6 @@ import com.configure_me_miriam_example_2.api.models.pets.PetCreateParams
 import com.configure_me_miriam_example_2.api.models.pets.PetDeleteParams
 import com.configure_me_miriam_example_2.api.models.pets.PetListParams
 import com.configure_me_miriam_example_2.api.models.pets.PetRetrieveParams
-import com.google.errorprone.annotations.MustBeClosed
 import java.util.concurrent.CompletableFuture
 
 interface PetServiceAsync {
@@ -134,12 +133,10 @@ interface PetServiceAsync {
          * Returns a raw HTTP response for `post /pets`, but is otherwise the same as
          * [PetServiceAsync.create].
          */
-        @MustBeClosed
         fun create(params: PetCreateParams): CompletableFuture<HttpResponseFor<Pet>> =
             create(params, RequestOptions.none())
 
         /** @see [create] */
-        @MustBeClosed
         fun create(
             params: PetCreateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
@@ -149,12 +146,10 @@ interface PetServiceAsync {
          * Returns a raw HTTP response for `get /pets/{id}`, but is otherwise the same as
          * [PetServiceAsync.retrieve].
          */
-        @MustBeClosed
         fun retrieve(id: Long): CompletableFuture<HttpResponseFor<Pet>> =
             retrieve(id, PetRetrieveParams.none())
 
         /** @see [retrieve] */
-        @MustBeClosed
         fun retrieve(
             id: Long,
             params: PetRetrieveParams = PetRetrieveParams.none(),
@@ -163,26 +158,22 @@ interface PetServiceAsync {
             retrieve(params.toBuilder().id(id).build(), requestOptions)
 
         /** @see [retrieve] */
-        @MustBeClosed
         fun retrieve(
             id: Long,
             params: PetRetrieveParams = PetRetrieveParams.none(),
         ): CompletableFuture<HttpResponseFor<Pet>> = retrieve(id, params, RequestOptions.none())
 
         /** @see [retrieve] */
-        @MustBeClosed
         fun retrieve(
             params: PetRetrieveParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<Pet>>
 
         /** @see [retrieve] */
-        @MustBeClosed
         fun retrieve(params: PetRetrieveParams): CompletableFuture<HttpResponseFor<Pet>> =
             retrieve(params, RequestOptions.none())
 
         /** @see [retrieve] */
-        @MustBeClosed
         fun retrieve(
             id: Long,
             requestOptions: RequestOptions,
@@ -193,24 +184,20 @@ interface PetServiceAsync {
          * Returns a raw HTTP response for `get /pets`, but is otherwise the same as
          * [PetServiceAsync.list].
          */
-        @MustBeClosed
         fun list(): CompletableFuture<HttpResponseFor<List<Pet>>> = list(PetListParams.none())
 
         /** @see [list] */
-        @MustBeClosed
         fun list(
             params: PetListParams = PetListParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<List<Pet>>>
 
         /** @see [list] */
-        @MustBeClosed
         fun list(
             params: PetListParams = PetListParams.none()
         ): CompletableFuture<HttpResponseFor<List<Pet>>> = list(params, RequestOptions.none())
 
         /** @see [list] */
-        @MustBeClosed
         fun list(requestOptions: RequestOptions): CompletableFuture<HttpResponseFor<List<Pet>>> =
             list(PetListParams.none(), requestOptions)
 
@@ -218,11 +205,9 @@ interface PetServiceAsync {
          * Returns a raw HTTP response for `delete /pets/{id}`, but is otherwise the same as
          * [PetServiceAsync.delete].
          */
-        @MustBeClosed
         fun delete(id: Long): CompletableFuture<HttpResponse> = delete(id, PetDeleteParams.none())
 
         /** @see [delete] */
-        @MustBeClosed
         fun delete(
             id: Long,
             params: PetDeleteParams = PetDeleteParams.none(),
@@ -231,26 +216,22 @@ interface PetServiceAsync {
             delete(params.toBuilder().id(id).build(), requestOptions)
 
         /** @see [delete] */
-        @MustBeClosed
         fun delete(
             id: Long,
             params: PetDeleteParams = PetDeleteParams.none(),
         ): CompletableFuture<HttpResponse> = delete(id, params, RequestOptions.none())
 
         /** @see [delete] */
-        @MustBeClosed
         fun delete(
             params: PetDeleteParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponse>
 
         /** @see [delete] */
-        @MustBeClosed
         fun delete(params: PetDeleteParams): CompletableFuture<HttpResponse> =
             delete(params, RequestOptions.none())
 
         /** @see [delete] */
-        @MustBeClosed
         fun delete(id: Long, requestOptions: RequestOptions): CompletableFuture<HttpResponse> =
             delete(id, PetDeleteParams.none(), requestOptions)
     }
