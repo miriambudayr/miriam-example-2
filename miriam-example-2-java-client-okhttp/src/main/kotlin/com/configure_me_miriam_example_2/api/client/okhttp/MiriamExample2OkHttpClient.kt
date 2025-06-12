@@ -168,13 +168,7 @@ class MiriamExample2OkHttpClient private constructor() {
         fun build(): MiriamExample2Client =
             MiriamExample2ClientImpl(
                 clientOptions
-                    .httpClient(
-                        OkHttpClient.builder()
-                            .baseUrl(clientOptions.baseUrl())
-                            .timeout(timeout)
-                            .proxy(proxy)
-                            .build()
-                    )
+                    .httpClient(OkHttpClient.builder().timeout(timeout).proxy(proxy).build())
                     .build()
             )
     }
