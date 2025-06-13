@@ -2,7 +2,9 @@
 
 package com.configure_me_miriam_example_2.api.client
 
+import com.configure_me_miriam_example_2.api.core.ClientOptions
 import com.configure_me_miriam_example_2.api.services.blocking.PetService
+import java.util.function.Consumer
 
 /**
  * A client for interacting with the Miriam Example 2 REST API synchronously. You can also switch to
@@ -33,6 +35,13 @@ interface MiriamExample2Client {
      */
     fun withRawResponse(): WithRawResponse
 
+    /**
+     * Returns a view of this service with the given option modifications applied.
+     *
+     * The original service is not modified.
+     */
+    fun withOptions(modifier: Consumer<ClientOptions.Builder>): MiriamExample2Client
+
     fun pets(): PetService
 
     /**
@@ -52,6 +61,15 @@ interface MiriamExample2Client {
      * A view of [MiriamExample2Client] that provides access to raw HTTP responses for each method.
      */
     interface WithRawResponse {
+
+        /**
+         * Returns a view of this service with the given option modifications applied.
+         *
+         * The original service is not modified.
+         */
+        fun withOptions(
+            modifier: Consumer<ClientOptions.Builder>
+        ): MiriamExample2Client.WithRawResponse
 
         fun pets(): PetService.WithRawResponse
     }

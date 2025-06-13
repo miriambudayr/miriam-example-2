@@ -2,6 +2,7 @@
 
 package com.configure_me_miriam_example_2.api.services.async
 
+import com.configure_me_miriam_example_2.api.core.ClientOptions
 import com.configure_me_miriam_example_2.api.core.RequestOptions
 import com.configure_me_miriam_example_2.api.core.http.HttpResponse
 import com.configure_me_miriam_example_2.api.core.http.HttpResponseFor
@@ -11,6 +12,7 @@ import com.configure_me_miriam_example_2.api.models.pets.PetDeleteParams
 import com.configure_me_miriam_example_2.api.models.pets.PetListParams
 import com.configure_me_miriam_example_2.api.models.pets.PetRetrieveParams
 import java.util.concurrent.CompletableFuture
+import java.util.function.Consumer
 
 interface PetServiceAsync {
 
@@ -18,6 +20,13 @@ interface PetServiceAsync {
      * Returns a view of this service that provides access to raw HTTP responses for each method.
      */
     fun withRawResponse(): WithRawResponse
+
+    /**
+     * Returns a view of this service with the given option modifications applied.
+     *
+     * The original service is not modified.
+     */
+    fun withOptions(modifier: Consumer<ClientOptions.Builder>): PetServiceAsync
 
     /** Creates a new pet in the store. Duplicates are allowed */
     fun create(params: PetCreateParams): CompletableFuture<Pet> =
@@ -128,6 +137,13 @@ interface PetServiceAsync {
 
     /** A view of [PetServiceAsync] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
+
+        /**
+         * Returns a view of this service with the given option modifications applied.
+         *
+         * The original service is not modified.
+         */
+        fun withOptions(modifier: Consumer<ClientOptions.Builder>): PetServiceAsync.WithRawResponse
 
         /**
          * Returns a raw HTTP response for `post /pets`, but is otherwise the same as

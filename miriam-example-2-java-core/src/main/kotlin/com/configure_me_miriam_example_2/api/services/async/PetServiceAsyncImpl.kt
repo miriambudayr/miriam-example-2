@@ -24,6 +24,7 @@ import com.configure_me_miriam_example_2.api.models.pets.PetDeleteParams
 import com.configure_me_miriam_example_2.api.models.pets.PetListParams
 import com.configure_me_miriam_example_2.api.models.pets.PetRetrieveParams
 import java.util.concurrent.CompletableFuture
+import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
 class PetServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
@@ -34,6 +35,9 @@ class PetServiceAsyncImpl internal constructor(private val clientOptions: Client
     }
 
     override fun withRawResponse(): PetServiceAsync.WithRawResponse = withRawResponse
+
+    override fun withOptions(modifier: Consumer<ClientOptions.Builder>): PetServiceAsync =
+        PetServiceAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
     override fun create(
         params: PetCreateParams,
@@ -67,6 +71,13 @@ class PetServiceAsyncImpl internal constructor(private val clientOptions: Client
         PetServiceAsync.WithRawResponse {
 
         private val errorHandler: Handler<JsonValue> = errorHandler(clientOptions.jsonMapper)
+
+        override fun withOptions(
+            modifier: Consumer<ClientOptions.Builder>
+        ): PetServiceAsync.WithRawResponse =
+            PetServiceAsyncImpl.WithRawResponseImpl(
+                clientOptions.toBuilder().apply(modifier::accept).build()
+            )
 
         private val createHandler: Handler<Pet> =
             jsonHandler<Pet>(clientOptions.jsonMapper).withErrorHandler(errorHandler)
