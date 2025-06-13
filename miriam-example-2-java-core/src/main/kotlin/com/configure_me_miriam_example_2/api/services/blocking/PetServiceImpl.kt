@@ -23,6 +23,7 @@ import com.configure_me_miriam_example_2.api.models.pets.PetCreateParams
 import com.configure_me_miriam_example_2.api.models.pets.PetDeleteParams
 import com.configure_me_miriam_example_2.api.models.pets.PetListParams
 import com.configure_me_miriam_example_2.api.models.pets.PetRetrieveParams
+import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
 class PetServiceImpl internal constructor(private val clientOptions: ClientOptions) : PetService {
@@ -32,6 +33,9 @@ class PetServiceImpl internal constructor(private val clientOptions: ClientOptio
     }
 
     override fun withRawResponse(): PetService.WithRawResponse = withRawResponse
+
+    override fun withOptions(modifier: Consumer<ClientOptions.Builder>): PetService =
+        PetServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
     override fun create(params: PetCreateParams, requestOptions: RequestOptions): Pet =
         // post /pets
@@ -54,6 +58,13 @@ class PetServiceImpl internal constructor(private val clientOptions: ClientOptio
         PetService.WithRawResponse {
 
         private val errorHandler: Handler<JsonValue> = errorHandler(clientOptions.jsonMapper)
+
+        override fun withOptions(
+            modifier: Consumer<ClientOptions.Builder>
+        ): PetService.WithRawResponse =
+            PetServiceImpl.WithRawResponseImpl(
+                clientOptions.toBuilder().apply(modifier::accept).build()
+            )
 
         private val createHandler: Handler<Pet> =
             jsonHandler<Pet>(clientOptions.jsonMapper).withErrorHandler(errorHandler)

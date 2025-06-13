@@ -6,6 +6,7 @@ import com.configure_me_miriam_example_2.api.core.ClientOptions
 import com.configure_me_miriam_example_2.api.core.getPackageVersion
 import com.configure_me_miriam_example_2.api.services.async.PetServiceAsync
 import com.configure_me_miriam_example_2.api.services.async.PetServiceAsyncImpl
+import java.util.function.Consumer
 
 class MiriamExample2ClientAsyncImpl(private val clientOptions: ClientOptions) :
     MiriamExample2ClientAsync {
@@ -31,6 +32,9 @@ class MiriamExample2ClientAsyncImpl(private val clientOptions: ClientOptions) :
 
     override fun withRawResponse(): MiriamExample2ClientAsync.WithRawResponse = withRawResponse
 
+    override fun withOptions(modifier: Consumer<ClientOptions.Builder>): MiriamExample2ClientAsync =
+        MiriamExample2ClientAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
+
     override fun pets(): PetServiceAsync = pets
 
     override fun close() = clientOptions.httpClient.close()
@@ -41,6 +45,13 @@ class MiriamExample2ClientAsyncImpl(private val clientOptions: ClientOptions) :
         private val pets: PetServiceAsync.WithRawResponse by lazy {
             PetServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
+
+        override fun withOptions(
+            modifier: Consumer<ClientOptions.Builder>
+        ): MiriamExample2ClientAsync.WithRawResponse =
+            MiriamExample2ClientAsyncImpl.WithRawResponseImpl(
+                clientOptions.toBuilder().apply(modifier::accept).build()
+            )
 
         override fun pets(): PetServiceAsync.WithRawResponse = pets
     }
