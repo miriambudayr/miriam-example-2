@@ -17,5 +17,12 @@ tasks.withType<JavaCompile>().configureEach {
 }
 
 application {
-    mainClass = "com.configure_me_miriam_example_2.api.example.Main"
+    // Use `./gradlew :miriam-example-2-java-example:run` to run `Main`
+    // Use `./gradlew :miriam-example-2-java-example:run -Dexample=Something` to run `SomethingExample`
+    mainClass = "com.configure_me_miriam_example_2.api.example.${
+        if (project.hasProperty("example"))
+            "${project.property("example")}Example"
+        else
+            "Main"
+    }"
 }
