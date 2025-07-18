@@ -3,13 +3,12 @@
 package com.configure_me_miriam_example_2.api.services.async
 
 import com.configure_me_miriam_example_2.api.core.ClientOptions
-import com.configure_me_miriam_example_2.api.core.JsonValue
 import com.configure_me_miriam_example_2.api.core.RequestOptions
 import com.configure_me_miriam_example_2.api.core.checkRequired
 import com.configure_me_miriam_example_2.api.core.handlers.emptyHandler
+import com.configure_me_miriam_example_2.api.core.handlers.errorBodyHandler
 import com.configure_me_miriam_example_2.api.core.handlers.errorHandler
 import com.configure_me_miriam_example_2.api.core.handlers.jsonHandler
-import com.configure_me_miriam_example_2.api.core.handlers.withErrorHandler
 import com.configure_me_miriam_example_2.api.core.http.HttpMethod
 import com.configure_me_miriam_example_2.api.core.http.HttpRequest
 import com.configure_me_miriam_example_2.api.core.http.HttpResponse
@@ -70,7 +69,8 @@ class PetServiceAsyncImpl internal constructor(private val clientOptions: Client
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         PetServiceAsync.WithRawResponse {
 
-        private val errorHandler: Handler<JsonValue> = errorHandler(clientOptions.jsonMapper)
+        private val errorHandler: Handler<HttpResponse> =
+            errorHandler(errorBodyHandler(clientOptions.jsonMapper))
 
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
@@ -79,8 +79,7 @@ class PetServiceAsyncImpl internal constructor(private val clientOptions: Client
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val createHandler: Handler<Pet> =
-            jsonHandler<Pet>(clientOptions.jsonMapper).withErrorHandler(errorHandler)
+        private val createHandler: Handler<Pet> = jsonHandler<Pet>(clientOptions.jsonMapper)
 
         override fun create(
             params: PetCreateParams,
@@ -98,7 +97,7 @@ class PetServiceAsyncImpl internal constructor(private val clientOptions: Client
             return request
                 .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
                 .thenApply { response ->
-                    response.parseable {
+                    errorHandler.handle(response).parseable {
                         response
                             .use { createHandler.handle(it) }
                             .also {
@@ -110,8 +109,7 @@ class PetServiceAsyncImpl internal constructor(private val clientOptions: Client
                 }
         }
 
-        private val retrieveHandler: Handler<Pet> =
-            jsonHandler<Pet>(clientOptions.jsonMapper).withErrorHandler(errorHandler)
+        private val retrieveHandler: Handler<Pet> = jsonHandler<Pet>(clientOptions.jsonMapper)
 
         override fun retrieve(
             params: PetRetrieveParams,
@@ -131,7 +129,7 @@ class PetServiceAsyncImpl internal constructor(private val clientOptions: Client
             return request
                 .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
                 .thenApply { response ->
-                    response.parseable {
+                    errorHandler.handle(response).parseable {
                         response
                             .use { retrieveHandler.handle(it) }
                             .also {
@@ -144,7 +142,7 @@ class PetServiceAsyncImpl internal constructor(private val clientOptions: Client
         }
 
         private val listHandler: Handler<List<Pet>> =
-            jsonHandler<List<Pet>>(clientOptions.jsonMapper).withErrorHandler(errorHandler)
+            jsonHandler<List<Pet>>(clientOptions.jsonMapper)
 
         override fun list(
             params: PetListParams,
@@ -161,7 +159,7 @@ class PetServiceAsyncImpl internal constructor(private val clientOptions: Client
             return request
                 .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
                 .thenApply { response ->
-                    response.parseable {
+                    errorHandler.handle(response).parseable {
                         response
                             .use { listHandler.handle(it) }
                             .also {
@@ -173,7 +171,7 @@ class PetServiceAsyncImpl internal constructor(private val clientOptions: Client
                 }
         }
 
-        private val deleteHandler: Handler<Void?> = emptyHandler().withErrorHandler(errorHandler)
+        private val deleteHandler: Handler<Void?> = emptyHandler()
 
         override fun delete(
             params: PetDeleteParams,
@@ -194,7 +192,9 @@ class PetServiceAsyncImpl internal constructor(private val clientOptions: Client
             return request
                 .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
                 .thenApply { response ->
-                    response.parseable { response.use { deleteHandler.handle(it) } }
+                    errorHandler.handle(response).parseable {
+                        response.use { deleteHandler.handle(it) }
+                    }
                 }
         }
     }
