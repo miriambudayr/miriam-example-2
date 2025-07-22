@@ -224,8 +224,12 @@ private constructor(
         fun timeout(): Timeout = timeout
 
         fun fromEnv() = apply {
-            System.getenv("MIRIAM_EXAMPLE_2_BASE_URL")?.let { baseUrl(it) }
-            System.getenv("MIRIAM_EXAMPLE_2_API_KEY")?.let { apiKey(it) }
+            (System.getProperty("miriamexample2.baseUrl")
+                    ?: System.getenv("MIRIAM_EXAMPLE_2_BASE_URL"))
+                ?.let { baseUrl(it) }
+            (System.getProperty("miriamexample2.apiKey")
+                    ?: System.getenv("MIRIAM_EXAMPLE_2_API_KEY"))
+                ?.let { apiKey(it) }
         }
 
         /**
