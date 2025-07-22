@@ -51,7 +51,8 @@ import com.configure_me_miriam_example_2.api.client.okhttp.MiriamExample2OkHttpC
 import com.configure_me_miriam_example_2.api.models.pets.Pet;
 import com.configure_me_miriam_example_2.api.models.pets.PetListParams;
 
-// Configures using the `MIRIAM_EXAMPLE_2_API_KEY` and `MIRIAM_EXAMPLE_2_BASE_URL` environment variables
+// Configures using the `miriamexample2.apiKey` and `miriamexample2.baseUrl` system properties
+// Or configures using the `MIRIAM_EXAMPLE_2_API_KEY` and `MIRIAM_EXAMPLE_2_BASE_URL` environment variables
 MiriamExample2Client client = MiriamExample2OkHttpClient.fromEnv();
 
 List<Pet> pets = client.pets().list();
@@ -59,13 +60,14 @@ List<Pet> pets = client.pets().list();
 
 ## Client configuration
 
-Configure the client using environment variables:
+Configure the client using system properties or environment variables:
 
 ```java
 import com.configure_me_miriam_example_2.api.client.MiriamExample2Client;
 import com.configure_me_miriam_example_2.api.client.okhttp.MiriamExample2OkHttpClient;
 
-// Configures using the `MIRIAM_EXAMPLE_2_API_KEY` and `MIRIAM_EXAMPLE_2_BASE_URL` environment variables
+// Configures using the `miriamexample2.apiKey` and `miriamexample2.baseUrl` system properties
+// Or configures using the `MIRIAM_EXAMPLE_2_API_KEY` and `MIRIAM_EXAMPLE_2_BASE_URL` environment variables
 MiriamExample2Client client = MiriamExample2OkHttpClient.fromEnv();
 ```
 
@@ -87,7 +89,8 @@ import com.configure_me_miriam_example_2.api.client.MiriamExample2Client;
 import com.configure_me_miriam_example_2.api.client.okhttp.MiriamExample2OkHttpClient;
 
 MiriamExample2Client client = MiriamExample2OkHttpClient.builder()
-    // Configures using the `MIRIAM_EXAMPLE_2_API_KEY` and `MIRIAM_EXAMPLE_2_BASE_URL` environment variables
+    // Configures using the `miriamexample2.apiKey` and `miriamexample2.baseUrl` system properties
+    Or configures using the `MIRIAM_EXAMPLE_2_API_KEY` and `MIRIAM_EXAMPLE_2_BASE_URL` environment variables
     .fromEnv()
     .apiKey("My API Key")
     .build();
@@ -95,10 +98,12 @@ MiriamExample2Client client = MiriamExample2OkHttpClient.builder()
 
 See this table for the available options:
 
-| Setter    | Environment variable        | Required | Default value                       |
-| --------- | --------------------------- | -------- | ----------------------------------- |
-| `apiKey`  | `MIRIAM_EXAMPLE_2_API_KEY`  | false    | -                                   |
-| `baseUrl` | `MIRIAM_EXAMPLE_2_BASE_URL` | true     | `"https://petstore.swagger.io/api"` |
+| Setter    | System property          | Environment variable        | Required | Default value                       |
+| --------- | ------------------------ | --------------------------- | -------- | ----------------------------------- |
+| `apiKey`  | `miriamexample2.apiKey`  | `MIRIAM_EXAMPLE_2_API_KEY`  | false    | -                                   |
+| `baseUrl` | `miriamexample2.baseUrl` | `MIRIAM_EXAMPLE_2_BASE_URL` | true     | `"https://petstore.swagger.io/api"` |
+
+System properties take precedence over environment variables.
 
 > [!TIP]
 > Don't create more than one client in the same application. Each client has a connection pool and
@@ -144,7 +149,8 @@ import com.configure_me_miriam_example_2.api.models.pets.Pet;
 import com.configure_me_miriam_example_2.api.models.pets.PetListParams;
 import java.util.concurrent.CompletableFuture;
 
-// Configures using the `MIRIAM_EXAMPLE_2_API_KEY` and `MIRIAM_EXAMPLE_2_BASE_URL` environment variables
+// Configures using the `miriamexample2.apiKey` and `miriamexample2.baseUrl` system properties
+// Or configures using the `MIRIAM_EXAMPLE_2_API_KEY` and `MIRIAM_EXAMPLE_2_BASE_URL` environment variables
 MiriamExample2Client client = MiriamExample2OkHttpClient.fromEnv();
 
 CompletableFuture<List<Pet>> pets = client.async().pets().list();
@@ -159,7 +165,8 @@ import com.configure_me_miriam_example_2.api.models.pets.Pet;
 import com.configure_me_miriam_example_2.api.models.pets.PetListParams;
 import java.util.concurrent.CompletableFuture;
 
-// Configures using the `MIRIAM_EXAMPLE_2_API_KEY` and `MIRIAM_EXAMPLE_2_BASE_URL` environment variables
+// Configures using the `miriamexample2.apiKey` and `miriamexample2.baseUrl` system properties
+// Or configures using the `MIRIAM_EXAMPLE_2_API_KEY` and `MIRIAM_EXAMPLE_2_BASE_URL` environment variables
 MiriamExample2ClientAsync client = MiriamExample2OkHttpClientAsync.fromEnv();
 
 CompletableFuture<List<Pet>> pets = client.pets().list();
