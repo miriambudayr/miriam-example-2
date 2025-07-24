@@ -90,7 +90,7 @@ import com.configure_me_miriam_example_2.api.client.okhttp.MiriamExample2OkHttpC
 
 MiriamExample2Client client = MiriamExample2OkHttpClient.builder()
     // Configures using the `miriamexample2.apiKey` and `miriamexample2.baseUrl` system properties
-    Or configures using the `MIRIAM_EXAMPLE_2_API_KEY` and `MIRIAM_EXAMPLE_2_BASE_URL` environment variables
+    // Or configures using the `MIRIAM_EXAMPLE_2_API_KEY` and `MIRIAM_EXAMPLE_2_BASE_URL` environment variables
     .fromEnv()
     .apiKey("My API Key")
     .build();
