@@ -6,6 +6,7 @@ import com.configure_me_miriam_example_2.api.core.ClientOptions
 import com.configure_me_miriam_example_2.api.core.getPackageVersion
 import com.configure_me_miriam_example_2.api.services.blocking.PetService
 import com.configure_me_miriam_example_2.api.services.blocking.PetServiceImpl
+import java.util.function.Consumer
 
 class MiriamExample2ClientImpl(private val clientOptions: ClientOptions) : MiriamExample2Client {
 
@@ -32,6 +33,9 @@ class MiriamExample2ClientImpl(private val clientOptions: ClientOptions) : Miria
 
     override fun withRawResponse(): MiriamExample2Client.WithRawResponse = withRawResponse
 
+    override fun withOptions(modifier: Consumer<ClientOptions.Builder>): MiriamExample2Client =
+        MiriamExample2ClientImpl(clientOptions.toBuilder().apply(modifier::accept).build())
+
     override fun pets(): PetService = pets
 
     override fun close() = clientOptions.httpClient.close()
@@ -42,6 +46,13 @@ class MiriamExample2ClientImpl(private val clientOptions: ClientOptions) : Miria
         private val pets: PetService.WithRawResponse by lazy {
             PetServiceImpl.WithRawResponseImpl(clientOptions)
         }
+
+        override fun withOptions(
+            modifier: Consumer<ClientOptions.Builder>
+        ): MiriamExample2Client.WithRawResponse =
+            MiriamExample2ClientImpl.WithRawResponseImpl(
+                clientOptions.toBuilder().apply(modifier::accept).build()
+            )
 
         override fun pets(): PetService.WithRawResponse = pets
     }

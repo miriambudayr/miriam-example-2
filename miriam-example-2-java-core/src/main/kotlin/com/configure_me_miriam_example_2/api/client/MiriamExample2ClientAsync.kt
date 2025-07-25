@@ -2,7 +2,9 @@
 
 package com.configure_me_miriam_example_2.api.client
 
+import com.configure_me_miriam_example_2.api.core.ClientOptions
 import com.configure_me_miriam_example_2.api.services.async.PetServiceAsync
+import java.util.function.Consumer
 
 /**
  * A client for interacting with the Miriam Example 2 REST API asynchronously. You can also switch
@@ -33,6 +35,13 @@ interface MiriamExample2ClientAsync {
      */
     fun withRawResponse(): WithRawResponse
 
+    /**
+     * Returns a view of this service with the given option modifications applied.
+     *
+     * The original service is not modified.
+     */
+    fun withOptions(modifier: Consumer<ClientOptions.Builder>): MiriamExample2ClientAsync
+
     fun pets(): PetServiceAsync
 
     /**
@@ -53,6 +62,15 @@ interface MiriamExample2ClientAsync {
      * method.
      */
     interface WithRawResponse {
+
+        /**
+         * Returns a view of this service with the given option modifications applied.
+         *
+         * The original service is not modified.
+         */
+        fun withOptions(
+            modifier: Consumer<ClientOptions.Builder>
+        ): MiriamExample2ClientAsync.WithRawResponse
 
         fun pets(): PetServiceAsync.WithRawResponse
     }

@@ -11,7 +11,7 @@ configure<PublishingExtension> {
             pom {
                 name.set("Swagger Petstore")
                 description.set("A sample API that uses a petstore as an example to demonstrate features in the\nOpenAPI 3.0 specification")
-                url.set("https://swagger.ioooo")
+                url.set("https://swagger.iooo")
 
                 licenses {
                     license {
@@ -27,9 +27,9 @@ configure<PublishingExtension> {
                 }
 
                 scm {
-                    connection.set("scm:git:git://github.com/stainless-sdks/miriam-example-2-java.git")
-                    developerConnection.set("scm:git:git://github.com/stainless-sdks/miriam-example-2-java.git")
-                    url.set("https://github.com/stainless-sdks/miriam-example-2-java")
+                    connection.set("scm:git:git://github.com/miriambudayr/miriam-example-2.git")
+                    developerConnection.set("scm:git:git://github.com/miriambudayr/miriam-example-2.git")
+                    url.set("https://github.com/miriambudayr/miriam-example-2")
                 }
 
                 versionMapping {

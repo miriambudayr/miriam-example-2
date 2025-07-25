@@ -2,6 +2,7 @@
 
 package com.configure_me_miriam_example_2.api.services.blocking
 
+import com.configure_me_miriam_example_2.api.core.ClientOptions
 import com.configure_me_miriam_example_2.api.core.RequestOptions
 import com.configure_me_miriam_example_2.api.core.http.HttpResponse
 import com.configure_me_miriam_example_2.api.core.http.HttpResponseFor
@@ -11,6 +12,7 @@ import com.configure_me_miriam_example_2.api.models.pets.PetDeleteParams
 import com.configure_me_miriam_example_2.api.models.pets.PetListParams
 import com.configure_me_miriam_example_2.api.models.pets.PetRetrieveParams
 import com.google.errorprone.annotations.MustBeClosed
+import java.util.function.Consumer
 
 interface PetService {
 
@@ -19,36 +21,43 @@ interface PetService {
      */
     fun withRawResponse(): WithRawResponse
 
+    /**
+     * Returns a view of this service with the given option modifications applied.
+     *
+     * The original service is not modified.
+     */
+    fun withOptions(modifier: Consumer<ClientOptions.Builder>): PetService
+
     /** Creates a new pet in the store. Duplicates are allowed */
     fun create(params: PetCreateParams): Pet = create(params, RequestOptions.none())
 
-    /** @see [create] */
+    /** @see create */
     fun create(params: PetCreateParams, requestOptions: RequestOptions = RequestOptions.none()): Pet
 
     /** Returns a pet based on a single ID */
     fun retrieve(id: Long): Pet = retrieve(id, PetRetrieveParams.none())
 
-    /** @see [retrieve] */
+    /** @see retrieve */
     fun retrieve(
         id: Long,
         params: PetRetrieveParams = PetRetrieveParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
     ): Pet = retrieve(params.toBuilder().id(id).build(), requestOptions)
 
-    /** @see [retrieve] */
+    /** @see retrieve */
     fun retrieve(id: Long, params: PetRetrieveParams = PetRetrieveParams.none()): Pet =
         retrieve(id, params, RequestOptions.none())
 
-    /** @see [retrieve] */
+    /** @see retrieve */
     fun retrieve(
         params: PetRetrieveParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): Pet
 
-    /** @see [retrieve] */
+    /** @see retrieve */
     fun retrieve(params: PetRetrieveParams): Pet = retrieve(params, RequestOptions.none())
 
-    /** @see [retrieve] */
+    /** @see retrieve */
     fun retrieve(id: Long, requestOptions: RequestOptions): Pet =
         retrieve(id, PetRetrieveParams.none(), requestOptions)
 
@@ -75,45 +84,52 @@ interface PetService {
      */
     fun list(): List<Pet> = list(PetListParams.none())
 
-    /** @see [list] */
+    /** @see list */
     fun list(
         params: PetListParams = PetListParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
     ): List<Pet>
 
-    /** @see [list] */
+    /** @see list */
     fun list(params: PetListParams = PetListParams.none()): List<Pet> =
         list(params, RequestOptions.none())
 
-    /** @see [list] */
+    /** @see list */
     fun list(requestOptions: RequestOptions): List<Pet> = list(PetListParams.none(), requestOptions)
 
     /** deletes a single pet based on the ID supplied */
     fun delete(id: Long) = delete(id, PetDeleteParams.none())
 
-    /** @see [delete] */
+    /** @see delete */
     fun delete(
         id: Long,
         params: PetDeleteParams = PetDeleteParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
     ) = delete(params.toBuilder().id(id).build(), requestOptions)
 
-    /** @see [delete] */
+    /** @see delete */
     fun delete(id: Long, params: PetDeleteParams = PetDeleteParams.none()) =
         delete(id, params, RequestOptions.none())
 
-    /** @see [delete] */
+    /** @see delete */
     fun delete(params: PetDeleteParams, requestOptions: RequestOptions = RequestOptions.none())
 
-    /** @see [delete] */
+    /** @see delete */
     fun delete(params: PetDeleteParams) = delete(params, RequestOptions.none())
 
-    /** @see [delete] */
+    /** @see delete */
     fun delete(id: Long, requestOptions: RequestOptions) =
         delete(id, PetDeleteParams.none(), requestOptions)
 
     /** A view of [PetService] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
+
+        /**
+         * Returns a view of this service with the given option modifications applied.
+         *
+         * The original service is not modified.
+         */
+        fun withOptions(modifier: Consumer<ClientOptions.Builder>): PetService.WithRawResponse
 
         /**
          * Returns a raw HTTP response for `post /pets`, but is otherwise the same as
@@ -123,7 +139,7 @@ interface PetService {
         fun create(params: PetCreateParams): HttpResponseFor<Pet> =
             create(params, RequestOptions.none())
 
-        /** @see [create] */
+        /** @see create */
         @MustBeClosed
         fun create(
             params: PetCreateParams,
@@ -137,7 +153,7 @@ interface PetService {
         @MustBeClosed
         fun retrieve(id: Long): HttpResponseFor<Pet> = retrieve(id, PetRetrieveParams.none())
 
-        /** @see [retrieve] */
+        /** @see retrieve */
         @MustBeClosed
         fun retrieve(
             id: Long,
@@ -145,26 +161,26 @@ interface PetService {
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<Pet> = retrieve(params.toBuilder().id(id).build(), requestOptions)
 
-        /** @see [retrieve] */
+        /** @see retrieve */
         @MustBeClosed
         fun retrieve(
             id: Long,
             params: PetRetrieveParams = PetRetrieveParams.none(),
         ): HttpResponseFor<Pet> = retrieve(id, params, RequestOptions.none())
 
-        /** @see [retrieve] */
+        /** @see retrieve */
         @MustBeClosed
         fun retrieve(
             params: PetRetrieveParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<Pet>
 
-        /** @see [retrieve] */
+        /** @see retrieve */
         @MustBeClosed
         fun retrieve(params: PetRetrieveParams): HttpResponseFor<Pet> =
             retrieve(params, RequestOptions.none())
 
-        /** @see [retrieve] */
+        /** @see retrieve */
         @MustBeClosed
         fun retrieve(id: Long, requestOptions: RequestOptions): HttpResponseFor<Pet> =
             retrieve(id, PetRetrieveParams.none(), requestOptions)
@@ -175,19 +191,19 @@ interface PetService {
          */
         @MustBeClosed fun list(): HttpResponseFor<List<Pet>> = list(PetListParams.none())
 
-        /** @see [list] */
+        /** @see list */
         @MustBeClosed
         fun list(
             params: PetListParams = PetListParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<List<Pet>>
 
-        /** @see [list] */
+        /** @see list */
         @MustBeClosed
         fun list(params: PetListParams = PetListParams.none()): HttpResponseFor<List<Pet>> =
             list(params, RequestOptions.none())
 
-        /** @see [list] */
+        /** @see list */
         @MustBeClosed
         fun list(requestOptions: RequestOptions): HttpResponseFor<List<Pet>> =
             list(PetListParams.none(), requestOptions)
@@ -198,7 +214,7 @@ interface PetService {
          */
         @MustBeClosed fun delete(id: Long): HttpResponse = delete(id, PetDeleteParams.none())
 
-        /** @see [delete] */
+        /** @see delete */
         @MustBeClosed
         fun delete(
             id: Long,
@@ -206,23 +222,23 @@ interface PetService {
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponse = delete(params.toBuilder().id(id).build(), requestOptions)
 
-        /** @see [delete] */
+        /** @see delete */
         @MustBeClosed
         fun delete(id: Long, params: PetDeleteParams = PetDeleteParams.none()): HttpResponse =
             delete(id, params, RequestOptions.none())
 
-        /** @see [delete] */
+        /** @see delete */
         @MustBeClosed
         fun delete(
             params: PetDeleteParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponse
 
-        /** @see [delete] */
+        /** @see delete */
         @MustBeClosed
         fun delete(params: PetDeleteParams): HttpResponse = delete(params, RequestOptions.none())
 
-        /** @see [delete] */
+        /** @see delete */
         @MustBeClosed
         fun delete(id: Long, requestOptions: RequestOptions): HttpResponse =
             delete(id, PetDeleteParams.none(), requestOptions)

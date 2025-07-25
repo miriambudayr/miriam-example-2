@@ -44,8 +44,10 @@ private constructor(
     /** tags to filter by */
     fun tags(): Optional<List<String>> = Optional.ofNullable(tags)
 
+    /** Additional headers to send with the request. */
     fun _additionalHeaders(): Headers = additionalHeaders
 
+    /** Additional query param to send with the request. */
     fun _additionalQueryParams(): QueryParams = additionalQueryParams
 
     fun toBuilder() = Builder().from(this)

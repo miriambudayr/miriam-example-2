@@ -3,13 +3,12 @@
 package com.configure_me_miriam_example_2.api.services.blocking
 
 import com.configure_me_miriam_example_2.api.core.ClientOptions
-import com.configure_me_miriam_example_2.api.core.JsonValue
 import com.configure_me_miriam_example_2.api.core.RequestOptions
 import com.configure_me_miriam_example_2.api.core.checkRequired
 import com.configure_me_miriam_example_2.api.core.handlers.emptyHandler
+import com.configure_me_miriam_example_2.api.core.handlers.errorBodyHandler
 import com.configure_me_miriam_example_2.api.core.handlers.errorHandler
 import com.configure_me_miriam_example_2.api.core.handlers.jsonHandler
-import com.configure_me_miriam_example_2.api.core.handlers.withErrorHandler
 import com.configure_me_miriam_example_2.api.core.http.HttpMethod
 import com.configure_me_miriam_example_2.api.core.http.HttpRequest
 import com.configure_me_miriam_example_2.api.core.http.HttpResponse
@@ -23,6 +22,7 @@ import com.configure_me_miriam_example_2.api.models.pets.PetCreateParams
 import com.configure_me_miriam_example_2.api.models.pets.PetDeleteParams
 import com.configure_me_miriam_example_2.api.models.pets.PetListParams
 import com.configure_me_miriam_example_2.api.models.pets.PetRetrieveParams
+import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
 class PetServiceImpl internal constructor(private val clientOptions: ClientOptions) : PetService {
@@ -32,6 +32,9 @@ class PetServiceImpl internal constructor(private val clientOptions: ClientOptio
     }
 
     override fun withRawResponse(): PetService.WithRawResponse = withRawResponse
+
+    override fun withOptions(modifier: Consumer<ClientOptions.Builder>): PetService =
+        PetServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
     override fun create(params: PetCreateParams, requestOptions: RequestOptions): Pet =
         // post /pets
@@ -53,10 +56,17 @@ class PetServiceImpl internal constructor(private val clientOptions: ClientOptio
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         PetService.WithRawResponse {
 
-        private val errorHandler: Handler<JsonValue> = errorHandler(clientOptions.jsonMapper)
+        private val errorHandler: Handler<HttpResponse> =
+            errorHandler(errorBodyHandler(clientOptions.jsonMapper))
 
-        private val createHandler: Handler<Pet> =
-            jsonHandler<Pet>(clientOptions.jsonMapper).withErrorHandler(errorHandler)
+        override fun withOptions(
+            modifier: Consumer<ClientOptions.Builder>
+        ): PetService.WithRawResponse =
+            PetServiceImpl.WithRawResponseImpl(
+                clientOptions.toBuilder().apply(modifier::accept).build()
+            )
+
+        private val createHandler: Handler<Pet> = jsonHandler<Pet>(clientOptions.jsonMapper)
 
         override fun create(
             params: PetCreateParams,
@@ -65,13 +75,14 @@ class PetServiceImpl internal constructor(private val clientOptions: ClientOptio
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
+                    .baseUrl(clientOptions.baseUrl())
                     .addPathSegments("pets")
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepare(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
             val response = clientOptions.httpClient.execute(request, requestOptions)
-            return response.parseable {
+            return errorHandler.handle(response).parseable {
                 response
                     .use { createHandler.handle(it) }
                     .also {
@@ -82,8 +93,7 @@ class PetServiceImpl internal constructor(private val clientOptions: ClientOptio
             }
         }
 
-        private val retrieveHandler: Handler<Pet> =
-            jsonHandler<Pet>(clientOptions.jsonMapper).withErrorHandler(errorHandler)
+        private val retrieveHandler: Handler<Pet> = jsonHandler<Pet>(clientOptions.jsonMapper)
 
         override fun retrieve(
             params: PetRetrieveParams,
@@ -95,12 +105,13 @@ class PetServiceImpl internal constructor(private val clientOptions: ClientOptio
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
+                    .baseUrl(clientOptions.baseUrl())
                     .addPathSegments("pets", params._pathParam(0))
                     .build()
                     .prepare(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
             val response = clientOptions.httpClient.execute(request, requestOptions)
-            return response.parseable {
+            return errorHandler.handle(response).parseable {
                 response
                     .use { retrieveHandler.handle(it) }
                     .also {
@@ -112,7 +123,7 @@ class PetServiceImpl internal constructor(private val clientOptions: ClientOptio
         }
 
         private val listHandler: Handler<List<Pet>> =
-            jsonHandler<List<Pet>>(clientOptions.jsonMapper).withErrorHandler(errorHandler)
+            jsonHandler<List<Pet>>(clientOptions.jsonMapper)
 
         override fun list(
             params: PetListParams,
@@ -121,12 +132,13 @@ class PetServiceImpl internal constructor(private val clientOptions: ClientOptio
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
+                    .baseUrl(clientOptions.baseUrl())
                     .addPathSegments("pets")
                     .build()
                     .prepare(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
             val response = clientOptions.httpClient.execute(request, requestOptions)
-            return response.parseable {
+            return errorHandler.handle(response).parseable {
                 response
                     .use { listHandler.handle(it) }
                     .also {
@@ -137,7 +149,7 @@ class PetServiceImpl internal constructor(private val clientOptions: ClientOptio
             }
         }
 
-        private val deleteHandler: Handler<Void?> = emptyHandler().withErrorHandler(errorHandler)
+        private val deleteHandler: Handler<Void?> = emptyHandler()
 
         override fun delete(params: PetDeleteParams, requestOptions: RequestOptions): HttpResponse {
             // We check here instead of in the params builder because this can be specified
@@ -146,13 +158,16 @@ class PetServiceImpl internal constructor(private val clientOptions: ClientOptio
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.DELETE)
+                    .baseUrl(clientOptions.baseUrl())
                     .addPathSegments("pets", params._pathParam(0))
                     .apply { params._body().ifPresent { body(json(clientOptions.jsonMapper, it)) } }
                     .build()
                     .prepare(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
             val response = clientOptions.httpClient.execute(request, requestOptions)
-            return response.parseable { response.use { deleteHandler.handle(it) } }
+            return errorHandler.handle(response).parseable {
+                response.use { deleteHandler.handle(it) }
+            }
         }
     }
 }
